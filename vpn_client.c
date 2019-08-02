@@ -20,7 +20,7 @@
 
 #define AS_CLIENT YES
 #define SERVER_HOST_NAME "james01.westus.cloudapp.azure.com"
-#define char g_server_host_ip[128] ={0};
+ char g_server_host_ip[128] ={0};
 //define SERVER_HOST "40.118.202.10"
 
 #define PORT 55555
@@ -40,7 +40,7 @@ static int find_host_ip(const char* hostname)
   if(lh)
   {
     struct in_addr **addr_list = (struct in_addr **)lh->h_addr_list;
-    strcpy(g_server_host_ip, (const char*) inet_ntoa(*addr_list[0]))
+    strcpy(g_server_host_ip, (const char*) inet_ntoa(*addr_list[0]));
 		printf("server IP: %s\n", g_server_host_ip);
     return -1;
   }
@@ -247,20 +247,20 @@ void cleanup_when_sig_exit() {
  * A comprehensive encryption is not easy and not the point for this demo
  * I'll just leave the stubs here
  */
- const unsigned DIV_ = 117;
+const unsigned DIV_ = 117;
 void encrypt(char *plantext, char *ciphertext, int len) {
-  for(int i = 0; i < len i++)
+  for(int i = 0; i < len; i++)
   {
-    ciphertext[i] = plantext[i] + ((i+1) % DIV_)
+    ciphertext[i] = plantext[i] + ((i+1) % DIV_);
   }
   
 }
 
 void decrypt(char *ciphertext, char *plantext, int len) {
   //memcpy(plantext, ciphertext, len);
-    for(int i = 0; i < len i++)
+    for(int i = 0; i < len ;i++)
   {
-    plantext[i] = ciphertext[i] - ((i+1) % DIV_)
+    plantext[i] = ciphertext[i] - ((i+1) % DIV_);
   }
 }
 
