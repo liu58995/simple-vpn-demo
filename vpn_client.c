@@ -12,6 +12,7 @@
 #include <signal.h>
 #include <linux/if.h>
 #include <linux/if_tun.h>
+#include <arpa/inet.h>
 
 /*
  * The following lines serve as configurations
@@ -42,12 +43,12 @@ static int find_host_ip(const char* hostname)
     struct in_addr **addr_list = (struct in_addr **)lh->h_addr_list;
     strcpy(g_server_host_ip, (const char*) inet_ntoa(*addr_list[0]));
 		printf("server IP: %s\n", g_server_host_ip);
-    return -1;
+    return 0;
   }
   else
   {
     printf("gethostbyname(%s) failed!\n", hostname);
-    return 0;
+    return 1;
   }
 }
 
@@ -148,6 +149,15 @@ void cleanup_route_table() {
 #endif
 }
 
+void setup_dns(){
+  run("mv /etc/resolv.conf  /etc/resolv.conf.old");
+  run("touch /etc/resolv.conf");
+  run("echo nameserver 8.8.8.8 > /etc/resolv.conf");
+}
+
+void cleanup_dns(){
+  run("mv /etc/resolv.conf.old  /etc/resolv.conf");
+}
 
 /*
  * Bind UDP port
@@ -220,6 +230,7 @@ void cleanup(int signo) {
   printf("Goodbye, cruel world....\n");
   if (signo == SIGHUP || signo == SIGINT || signo == SIGTERM) {
     cleanup_route_table();
+    cleanup_dns();
     exit(0);
   }
 }
@@ -276,6 +287,7 @@ int main(int argc, char **argv) {
 
   ifconfig();
   setup_route_table();
+  setup_dns();  //use 8.8.8.8 to replace polluted DNS
   cleanup_when_sig_exit();
 
 
@@ -352,6 +364,7 @@ int main(int argc, char **argv) {
   close(udp_fd);
 
   cleanup_route_table();
+  cleanup_dns();
 
   return 0;
 }
